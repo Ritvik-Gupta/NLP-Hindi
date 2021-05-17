@@ -1,6 +1,6 @@
 # Natural Language Processing on Hindi Bible text + Sentiment Analysis and Classification
 
-The [Ipynb Notebook](https://colab.research.google.com/drive/1KugDrrZM7zf1fqenUS6sMDn__rMbtQ8-#scrollTo=NjVPP6yiXudD) can be found here.
+The [Ipynb Notebook](https://github.com/Ritvik-Gupta/NLP-Hindi/blob/master/main.ipynb) can be found here.
 
 
 ## Introduction
@@ -19,7 +19,7 @@ First, classifying the book titles from **bible books.txt** to the New Testament
 
 ## WordCloud
 
-Using **full text bible.txt** which is a compilation of whole Hindi text of the Bible to make the WordCloud. Can only be viewed in the [Colab Ipynb Notebook](https://colab.research.google.com/drive/1KugDrrZM7zf1fqenUS6sMDn__rMbtQ8-#scrollTo=NjVPP6yiXudD) due to limitations of my system. Not present in **main.py**
+Using **full text bible.txt** which is a compilation of whole Hindi text of the Bible to make the WordCloud. Can only be viewed in the [Colab Ipynb Notebook](https://github.com/Ritvik-Gupta/NLP-Hindi/blob/master/main.ipynb) due to limitations of my system. Not present in **main.py**
 
 ## Resource-based Sentiment Analysis
 
