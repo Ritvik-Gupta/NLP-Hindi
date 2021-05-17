@@ -5,8 +5,6 @@ nltk.download("punkt")
 import warnings
 
 import matplotlib.pyplot as plt
-
-# library imports
 import pandas as pd
 
 warnings.filterwarnings("ignore")
@@ -134,12 +132,6 @@ plt.xticks(df_N.index, color="b", rotation=90, fontsize=12)
 plt.title("Authors of New Testament")
 plt.tight_layout()
 
-"""It can be easily seen here that relatively recent New Testament Books have lesser unknown writers (4%) as compared to the Old Testament (28%). <br>
-We get an interesting finding here that to the contrary of popular belief, it is not Paul who has written most of the new testament but it is Luke. Sure, Paul has written more books but volume-wise(no. of verses), It is Luke who gave maximum contribution. [Original manuscripts](https://apologika.blogspot.com/2014/05/who-wrote-most-of-new-testament.html) also support this fact.
-
-## Starting Text Analysis
-**Stopwords** are generally the most common words in a language and for our purpose of analysis, they have to be eliminated from the text. `Hindi_StopWords.txt` is a custom made list of 270 stopwords.
-"""
 
 with open(datasetPath["stopwords"], encoding="utf-8") as stopwords:
     stopword = stopwords.read().strip("\ufeff")
@@ -160,79 +152,7 @@ with open(
 stopwords = set(stopword)
 
 
-class StemWords:
-    suffixCollection = {
-        2: [
-            "कर",
-            "ाओ",
-            "िए",
-            "ाई",
-            "ाए",
-            "नी",
-            "ना",
-            "ते",
-            "ती",
-            "ाँ",
-            "ां",
-            "ों",
-            "ें",
-        ],
-        3: [
-            "ाकर",
-            "ाइए",
-            "ाईं",
-            "ाया",
-            "ेगी",
-            "ेगा",
-            "ोगी",
-            "ोगे",
-            "ाने",
-            "ाना",
-            "ाते",
-            "ाती",
-            "ाता",
-            "तीं",
-            "ाओं",
-            "ाएं",
-            "ुओं",
-            "ुएं",
-            "ुआं",
-        ],
-        4: [
-            "ाएगी",
-            "ाएगा",
-            "ाओगी",
-            "ाओगे",
-            "एंगी",
-            "ेंगी",
-            "एंगे",
-            "ेंगे",
-            "ूंगी",
-            "ूंगा",
-            "ातीं",
-            "नाओं",
-            "नाएं",
-            "ताओं",
-            "ताएं",
-            "ियाँ",
-            "ियों",
-            "ियां",
-        ],
-        5: ["ाएंगी", "ाएंगे", "ाऊंगी", "ाऊंगा", "ाइयाँ", "ाइयों", "ाइयां"],
-    }
-
-    @classmethod
-    def generate(cls, word):
-        for suffixLen, suffixes in cls.suffixCollection.items():
-            if len(word) > suffixLen + 1:
-                for suffix in suffixes:
-                    if word.endswith(suffix):
-                        return word[:-suffixLen]
-        return word
-
-
-"""### Most frequent words in Hindi Bible"""
-
+from .StemWords import StemWords
 from collections import Counter as collectionCounter
 
 wordcount = {}
@@ -287,7 +207,6 @@ print("In HHBD Hindi Bible")
 print(f"प्रेम appears for {freqDist['प्रेम']} times")
 print(f"डर appears for {freqDist['डर']} times")
 
-"""For you curious ones out there, here's a dictionary of words with their frequencies that might interest you."""
 
 checkWords = ["यीशु", "मसीह", "उद्धारकर्ता", "उद्धार", "क्रूस"]
 checkWordFreq = {}
@@ -297,18 +216,13 @@ for checkWord in checkWords:
 print(checkWordFreq)
 
 freqDist.pop("राजा", None)
-freqDist
 
-"""`freq` dictionary contains frequency of each word, we are taking frequency as a score of a particular word's importance. 
-> *I have intentionally removed word 'राजा' so that our algorithm won't give significance to verses containing lineages of various Kings*
-"""
 
 sents = []
 for i in text.split("॥"):
     sents.append(i.split("।"))
 sents = [item for sublist in sents for item in sublist]
 
-"""In the above code, We split our full bible text by *Puran Virams* & *Ardh Virams* i.e. '॥' & '।' and stored the resulted sentences in a flattened list `sents`. Next, we're ranking these sentences based on significance scores of their constituting words, in dictionary `ranking`."""
 
 from collections import defaultdict
 
@@ -318,7 +232,6 @@ for i, sent in enumerate(sents):
         if token in freqDist:
             ranking[i] += freqDist[token]
 
-"""We'll use these ranking to arrive at significant sentences as per the ranking calculated above."""
 
 from heapq import nlargest
 
@@ -326,11 +239,6 @@ sentsIdx = nlargest(1, ranking, key=ranking.get)
 summary = [sents[j] for j in sorted(sentsIdx)]
 summary
 
-"""It gives Joshua (यहोशू) chapter 22, verses 21-27 as the most significant verses in the Hindi Bible.
-
-### Hierarchical Clustering
-Here, I have done hierarchical Clustering on the first 10 sentences of Bible i.e Genesis (उत्पत्ति) 1:1-10. Sentences (denoted by a title words 'जल', 'ऊपर', 'आकाश' etc.) are clustered based on their cosine distances and their hierarchy is found out by Ward's method which merges cluster based on their cosine distances. <sub>(Cosine distance = 1- cosine similarity)</sub> <br><br>Cosine distance  is opposite to cosine similarity which calculates similarity between two vectors based on the cosine ratio of the angle made between them two. See, if you can make sense of below dendrogram.
-"""
 
 from scipy.cluster.hierarchy import dendrogram, ward
 from sklearn.feature_extraction.text import TfidfVectorizer
@@ -378,11 +286,6 @@ plt.yticks(fontproperties=hindiFont, fontsize=15)
 plt.tight_layout()  # show plot with tight layout
 plt.show()
 
-"""# Resource-based Sentiment Analysis
-#### Hindi WordNet
-Hindi WordNet (developed by IIT Bombay) is a similar resource like the WordNet in English, which captures lexical and semantic relations between Hindi words. Here we're only concerned with sentiments so I am using **SentiWordNet**, which contain sentiment polarity of Hindi words while clubbing their synonyms also.<br>
-Reading text file `HSWN_WN.txt` containing Hindi SentiWordNet into a Pandas Dataframe **data**.
-"""
 
 data = pd.read_csv(
     datasetPath["sentiment word net"],
@@ -404,10 +307,6 @@ for i in data.index:
 
 print(f"The size of the Hindi Sentiment Word Net : {len(wordsDict)} words")
 
-"""Clearly, this small amount of words won't be enough.
-### Using Machine Translation to improve our sentiment resource
-`hindi word list.csv` is just a list of Hindi words and their Hindi Translations, translated using Google's translation API. We're using *TextBlob* to get sentiment polarity of these translated Hindi words. This way we have more Hindi words to check sentiment polarity from.
-"""
 
 from textblob import TextBlob
 
